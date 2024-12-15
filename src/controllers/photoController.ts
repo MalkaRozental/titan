@@ -17,22 +17,25 @@ export const getPhotoURLs = async (req: Request, res: Response) => {
 
   const cachedPhotos: string[] = cache.get(cacheKey) ?? [];
 
-  if (cachedPhotos && cachedPhotos.length >= n) {
+  if (cachedPhotos.length >= n) {
+    logger.info("Retrieve photo URLs from cache");
     res.status(200).json(cachedPhotos.slice(0, n));
     return;
   }
 
   try {
-    const response = await axios.get("https://pixabay.com/api/", {
+    const response = await axios.get(process.env.PIXABAY_API_URL || "", {
       params: {
         key: process.env.PIXABAY_API_KEY,
-        per_page: 200,
+        per_page: process.env.PIXABAY_URL_PER_PAGE || 20,
       },
     });
 
     const photoUrls = response.data.hits.map((hit: any) => hit.webformatURL);
-    cache.set(cacheKey, cachedPhotos.concat(photoUrls));
-    res.status(200).json(cachedPhotos.slice(0, n));
+    const cachedAndApiPhotoURLs = cachedPhotos.concat(photoUrls);
+    cache.set(cacheKey, cachedAndApiPhotoURLs);
+    res.status(200).json(cachedAndApiPhotoURLs.slice(0, n));
+    logger.info("Retrieve photo URLs from api");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch photos from Pixabay." });

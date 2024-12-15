@@ -1,7 +1,7 @@
 import express from "express";
 import { getPhotoURLs } from "../controllers/photoController";
 
-const photoRouter = express.Router();
-photoRouter.get("/:n?", getPhotoURLs);
+const photoRoutes = express.Router();
+photoRoutes.get("/:n", getPhotoURLs);
 
-export default photoRouter;
+export default photoRoutes;

@@ -1,14 +1,5 @@
 import mongoose from "mongoose";
 
-export interface IOrder extends Document {
-  email: string;
-  fullName: string;
-  fullAddress: string;
-  imageUrls: string[];
-  frameColor: string;
-  user: string;
-}
-
 const orderSchema = new mongoose.Schema(
   {
     email: { type: String, required: true },
